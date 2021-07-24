@@ -1,0 +1,5 @@
+node_modules
+*.err
+*.out
+*.pid
+.DS_Store
