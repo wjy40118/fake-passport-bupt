@@ -13,4 +13,4 @@ ENV PORT=10985
 
 EXPOSE 10985
 
-CMD [ "npm", "start" ]
+CMD [ "node", "." ]
