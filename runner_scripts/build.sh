@@ -1,4 +1,2 @@
 #!/bin/bash
-
-# This will be your build script (if needed).
-# Leave empty if you do not need a build script.
+docker build --tag charlie0129/fake-passport-bupt . || exit 1

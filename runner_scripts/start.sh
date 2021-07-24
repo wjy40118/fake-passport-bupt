@@ -1,7 +1,1 @@
-node .
-# ↑↑↑↑ command up here ↑↑↑ 
-
-# Write the command to start you application on the first line
-# **ONLY** the first line will be used
-
-# For example, you may start a Java application using `java -jar example.jar`
+docker run -p 10985:10985 charlie0129/fake-passport-bupt
