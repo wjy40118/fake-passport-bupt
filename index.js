@@ -2,8 +2,7 @@ const express   = require('express')
 const fs        = require('fs');
 const path      = require('path')
 const app       = express()
-const router    = express.Router()
-const port      = 10985
+const port      = process.env.PORT || 10985
 const staticRes = express.static('static')
 
 app.get("/fake-passport-bupt", function (req, res) {
