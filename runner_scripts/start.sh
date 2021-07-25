@@ -1,1 +1,0 @@
-docker run -p 10985:10985 charlie0129/fake-passport-bupt
