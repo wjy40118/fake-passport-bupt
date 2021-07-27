@@ -1,0 +1,13 @@
+version: "3.6"
+services:
+  fake-passport-bupt:
+    build: .
+    image: charlie0129/fake-passport-bupt
+    container_name: fake-passport-bupt
+    # Uncomment the ports if you are not using traefik, i.e. you want to directly access it.
+    ports:
+      - "10985:10985"
+    environment:
+      - PORT
+    expose:
+      - "${PORT}"
