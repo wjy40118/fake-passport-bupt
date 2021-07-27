@@ -12,7 +12,7 @@
 
 ### 运行方法一：直接运行（使用`Node.js`）
 
-1. 确保 `node` 已正常安装（需要`>14`），通过 `node --version` 检查是否安装成功
+1. 确保 `node` 已正常安装（版本需要`>= 14`），通过 `node --version` 检查是否安装成功
 
 2. 进入本项目根目录，`npm install` 安装依赖
 3. `chmod +x runner.sh; ./runner.sh start dev --verbose` 开始运行，你应该会看到控制台输出 `App listening at 10985`（`10985` 是默认端口）
