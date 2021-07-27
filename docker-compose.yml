@@ -13,7 +13,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.fake-passport-bupt.rule=Host(`${WEBSITE_URL}`)"
       - "traefik.http.services.fake-passport-bupt.loadbalancer.server.port=${PORT}"
-      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.fake-passport-bupt.entrypoints=web"
     environment:
       - PORT
     expose:
