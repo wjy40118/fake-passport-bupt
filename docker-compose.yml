@@ -1,0 +1,24 @@
+version: "3.6"
+services:
+  fake-passport-bupt:
+    build: .
+    image: charlie0129/fake-passport-bupt
+    container_name: fake-passport-bupt
+    # Uncomment the ports if you are not using traefik, i.e. you want to directly access it.
+    # ports:
+    #   - "10985:10985"
+    networks:
+      - traefik-global-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fake-passport-bupt.rule=Host(`${WEBSITE_URL}`)"
+      - "traefik.http.services.fake-passport-bupt.loadbalancer.server.port=${PORT}"
+      - "traefik.http.routers.traefik.entrypoints=web"
+    environment:
+      - PORT
+    expose:
+      - "${PORT}"
+
+networks:
+  traefik-global-proxy:
+    external: true

@@ -6,11 +6,10 @@ COPY package*.json ./
 
 RUN npm install
 
-# Bundle app source
 COPY . .
 
-ENV PORT=10985
-
-EXPOSE 10985
+# ---- Uncomment them (below) if you are not using docker-compose ----
+# ENV PORT=10985
+# EXPOSE 10985
 
 CMD [ "node", "." ]
