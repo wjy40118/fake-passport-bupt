@@ -1,10 +1,12 @@
 FROM node:14
 
+ENV NODE_ENV=production
+
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY package*.json yarn.lock  ./
 
-RUN npm install
+RUN yarn install --frozen-lockfile
 
 COPY . .
 
