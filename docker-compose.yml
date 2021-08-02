@@ -12,10 +12,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.fake-passport-bupt.rule=Host(`${WEBSITE_URL}`)"
+      - "traefik.http.routers.fake-passport-bupt.entrypoints=web"
       - "traefik.http.services.fake-passport-bupt.loadbalancer.server.port=${PORT}"
-      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.fake-passport-bupt.middlewares=fake-passport-bupt-compress"
+      - "traefik.http.middlewares.fake-passport-bupt-compress.compress=true"
     environment:
-      - PORT
+      - "NODE_ENV=production"
+      - "PORT=${PORT}"
     expose:
       - "${PORT}"
 
