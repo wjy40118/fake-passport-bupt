@@ -32,12 +32,12 @@ const getRandomName = () => {
 
 const getRandomId = () => {
   const currentYear = (new Date()).getFullYear()
-  const randomYear = (Math.floor(Math.random() * 5) + currentYear - 4) * 1000000
-  const randomId = Math.floor(Math.random() * 200000) + 100000
+  const randomYear  = (Math.floor(Math.random() * 5) + currentYear - 4) * 1000000
+  const randomId    = Math.floor(Math.random() * 200000) + 100000
   return randomYear + randomId
 }
 
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
   fs.readFile(path.join(__dirname, 'static', 'index.html'), function (err, data) {
     if (err) {
       res.sendStatus(404);
@@ -52,12 +52,14 @@ app.get("/", function (req, res) {
         .replace('__time__', date.toISOString().replace("T", " ").slice(0, -5))
       res.setHeader('Content-Type', 'text/html')
       res.send(htmlString);
+      
+      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+      console.log(`${date.toISOString()} [new request] ip=${clientIp}, name=${req.query?.name || ""}, school=${req.query?.name || ""}, type=${req.query?.type || ""}, id=${req.query?.id || ""}`)
     }
   });
 });
 
 app.use('/', staticRes)
-
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`)
