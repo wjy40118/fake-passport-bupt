@@ -54,7 +54,7 @@ app.get("/", (req, res) => {
       res.send(htmlString);
       
       const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-      console.log(`${date.toISOString()} [new request] ip=${clientIp}, name=${req.query?.name || ""}, school=${req.query?.name || ""}, type=${req.query?.type || ""}, id=${req.query?.id || ""}`)
+      console.log(`${date.toISOString()} [new request] ip=${clientIp}, name=${req.query?.name || ""}, school=${req.query?.school || ""}, type=${req.query?.type || ""}, id=${req.query?.id || ""}`)
     }
   });
 });
