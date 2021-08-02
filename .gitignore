@@ -2,5 +2,4 @@ node_modules
 *.err
 *.out
 *.pid
-.env
 .DS_Store
