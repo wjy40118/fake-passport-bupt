@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
+    "faker": "^5.5.3",
     "node": "^16.4.0"
   }
 }
