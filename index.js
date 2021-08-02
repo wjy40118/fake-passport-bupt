@@ -12,10 +12,11 @@ app.get("/", function (req, res) {
     } else {
       let htmlString = data.toString()
       const date     = new Date(Date.now() + 8 * 60 * 60 * 1000)
-      htmlString     = htmlString.replace('__name__', req.query?.name)
-        .replace('__school__', req.query?.school)
-        .replace('__type__', req.query?.type)
-        .replace('__id__', req.query?.id)
+      htmlString     = htmlString
+        .replace('__name__', req.query?.name || '吴铭实')
+        .replace('__school__', req.query?.school || '计算机学院（国家示范性软件学院）')
+        .replace('__type__', req.query?.type || '入')
+        .replace('__id__', req.query?.id || '2019211915')
         .replace('__time__', date.toISOString().replace("T", " ").slice(0, -5))
       res.setHeader('Content-Type', 'text/html')
       res.send(htmlString);
