@@ -31,7 +31,6 @@ const getRandomName = () => {
 }
 
 const getRandomId = () => {
-  // 2019 2119 15
   const currentYear = (new Date()).getFullYear()
   const randomYear = (Math.floor(Math.random() * 5) + currentYear - 4) * 1000000
   const randomId = Math.floor(Math.random() * 200000) + 100000
