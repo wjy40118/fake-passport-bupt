@@ -22,6 +22,8 @@ services:
       - "AUTH_USERNAME=${AUTH_USERNAME}"
       - "AUTH_PASSWORD=${AUTH_PASSWORD}"
       - "LOG_FILENAME=${LOG_FILENAME}"
+    volumes:
+      - ./logs:/usr/src/app/logs
     expose:
       - "${PORT}"
 

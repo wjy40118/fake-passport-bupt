@@ -7,7 +7,7 @@ const app = express()
 const port = process.env.PORT || 10985
 const staticRes = express.static('static')
 const { createLogger, format, transports } = require('winston')
-const logFilename = process.env.LOG_FILENAME || "combined.log"
+const logFilename = "logs/" + (process.env.LOG_FILENAME || "combined.log")
 const lineReader = require('reverse-line-reader')
 
 const logger = createLogger({
