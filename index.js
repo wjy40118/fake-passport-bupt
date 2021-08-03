@@ -6,6 +6,32 @@ const basicAuth = require('express-basic-auth');
 const app = express()
 const port = process.env.PORT || 10985
 const staticRes = express.static('static')
+const { createLogger, format, transports } = require('winston')
+const logFilename = process.env.LOG_FILENAME || "combined.log"
+const lineReader = require('reverse-line-reader')
+
+const logger = createLogger({
+  level: 'info',
+  format: format.combine(
+    format.timestamp(),
+    format.errors({ stack: true }),
+    format.splat(),
+    format.json()
+  ),
+  defaultMeta: { service: 'fake-passport-bupt' },
+  transports: [
+    new transports.File({ filename: logFilename })
+  ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new transports.Console({
+    format: format.combine(
+      format.colorize(),
+      format.simple()
+    )
+  }));
+}
 
 const schoolList = [
   '信息与通信工程学院',
@@ -64,8 +90,15 @@ app.get("/", (req, res) => {
       res.setHeader('Content-Type', 'text/html')
       res.send(htmlString);
 
-      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-      console.log(`${date.toISOString()},${clientIp},${req.query?.name || ""},${req.query?.school || ""},${req.query?.type || ""},${req.query?.id || ""}`)
+      logger.info({
+        message: "new_request",
+        ip: req.ip,
+        username: req.query?.name,
+        school: req.query?.school,
+        type: req.query?.type,
+        userId: req.query?.id,
+        endpoint: req.path,
+      })
     }
   });
 });
@@ -76,6 +109,14 @@ app.post("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) 
     res.status(400).send("Need field `alert` in the body!")
     return
   }
+
+  logger.info({
+    message: "create_alert",
+    ip: req.ip,
+    content: customAlert,
+    endpoint: req.path,
+  })
+
   res.status(201).send(`Created alert: ${customAlert}`)
 })
 
@@ -86,13 +127,49 @@ app.get("/alert", (req, res) => {
 
 // delete alert
 app.delete("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
+  logger.info({
+    message: "remove_alert",
+    ip: req.ip,
+    content: customAlert,
+    endpoint: req.path,
+  })
+
   customAlert = ""
+
   res.status(204).send("Removed alert.")
+})
+
+app.get("/logs", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
+  const limit = req.query?.limit || 100
+  const logs = []
+  let lineRead = 0
+
+  lineReader.eachLine(logFilename, (line, last) => {
+    line && logs.push(line)
+    lineRead++
+
+    if (lineRead > limit) {
+      return false
+    }
+  }).then(() => {
+    logger.info({
+      message: "get_log",
+      ip: req.ip,
+      amount: limit,
+      endpoint: req.path,
+    })
+    res.status(200).send(logs)
+  })
 })
 
 app.use('/', staticRes)
 
+app.enable('trust proxy')
+
 app.listen(port, () => {
-  console.log(`App listening at ${port}, basic auth user: ${Object.keys(authUsers)}`)
-  console.log(`time,ip,name,school,type,id`)
+  logger.info({
+    message: 'server_start',
+    serverPort: port,
+    authUsers: Object.keys(authUsers)
+  })
 })
