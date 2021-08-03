@@ -142,17 +142,32 @@ app.delete("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res
 })
 
 app.get("/logs", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
-  const limit = req.query?.limit || 25
+  const limit = req.query?.limit
   const logs = []
   let lineRead = 0
 
-  lineReader.eachLine(logFilename, (line, last) => {
-    line && logs.push(JSON.parse(line))
-    lineRead++
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
 
-    if (lineRead > limit) {
-      return false
+  lineReader.eachLine(logFilename, (line, last) => {
+    if (!line) {
+      return true
     }
+
+    const lineParsed = JSON.parse(line)
+
+    if (limit) {
+      lineRead++
+      if (lineRead > limit) {
+        return false
+      }
+    } else {
+      if ((new Date(lineParsed.timestamp)).getTime() < today.getTime()) {
+        return false
+      }
+    }
+
+    logs.push(lineParsed)
   }).then(() => {
     res.status(200).send(logs)
   })
