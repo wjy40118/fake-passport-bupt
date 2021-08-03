@@ -13,7 +13,9 @@ const lineReader = require('reverse-line-reader')
 const logger = createLogger({
   level: 'info',
   format: format.combine(
-    format.timestamp(),
+    format.timestamp({
+      format: "YYYY-MM-DD HH:mm:ss.SSS"
+    }),
     format.errors({ stack: true }),
     format.splat(),
     format.json()
@@ -140,12 +142,12 @@ app.delete("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res
 })
 
 app.get("/logs", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
-  const limit = req.query?.limit || 100
+  const limit = req.query?.limit || 25
   const logs = []
   let lineRead = 0
 
   lineReader.eachLine(logFilename, (line, last) => {
-    line && logs.push(line)
+    line && logs.push(JSON.parse(line))
     lineRead++
 
     if (lineRead > limit) {
