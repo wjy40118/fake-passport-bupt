@@ -152,12 +152,6 @@ app.get("/logs", basicAuth({ users: authUsers, challenge: true }), (req, res) =>
       return false
     }
   }).then(() => {
-    logger.info({
-      message: "get_log",
-      ip: req.ip,
-      amount: limit,
-      endpoint: req.path,
-    })
     res.status(200).send(logs)
   })
 })
