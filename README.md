@@ -12,7 +12,7 @@
 
 示例：
 
-<img src="readme_assets/example_screenshot.jpg" style="width: auto; height: 50%" />
+<img src="readme_assets/example_screenshot.jpg" height="540" />
 
 ## 使用方法
 
