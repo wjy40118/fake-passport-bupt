@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300" viewBox="0 0 300 300">
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300" viewBox="12 12 276 276">
 <desc></desc>
 <rect width="300" height="300" fill="#ffffff" cx="0" cy="0" />
 <defs>
 <rect id="p" width="12" height="12" />
 </defs>
-<g fill="#30b400">
+<g fill="#00bb00">
 <use x="24" y="24" xlink:href="#p" />
 <use x="36" y="24" xlink:href="#p" />
 <use x="48" y="24" xlink:href="#p" />
