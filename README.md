@@ -6,7 +6,7 @@
 
 > 若你打算使用本工具，请知悉：使用者将自行承担使用本工具产生的所有后果！
 >
-> 该软件“按原样”提供，不提供任何形式的明示或暗示的保证，包括但不限于适销性、特定用途的适用性和不侵权的保证。在任何情况下，无论是在合同诉讼、侵权行为或其他方面，作者或版权持有人均不对直接或间接产生于本软件、使用本软件的过程中或对本软件做其他处理产生的任何索赔、损害或其他责任承担任何责任。（译者（本人）不对中文译文的准确性做任何保证，任何信息请以原文为准，详见 LICENSE 文件或 MIT 许可协议。）
+> 该软件“按原样”提供，不提供任何形式的明示或暗示的保证，包括但不限于适销性、特定用途的适用性和不侵权的保证。在任何情况下，无论是在合同诉讼、侵权行为或其他方面，作者或版权持有人均不对直接或间接产生于本软件、使用本软件的过程中或对本软件做其他处理产生的任何索赔、损害或其他后果承担任何责任。（译者（本人）不对中文译文的准确性做任何保证，任何信息请以原文为准，详见 LICENSE 文件或 MIT 许可协议。）
 >
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -33,7 +33,7 @@
 ### 运行方法二：Docker 容器化
 
 1. 确保安装了 `docker` 和 `docker-compose`
-2. 进入在本项目的根目录
+2. 进入在本项目的根目录，把 `.example.env` 复制一份为 `.env`（并设置其中的相关信息，如果需要的话）
 3. `docker-compose up --build --file docker-compose-general.yml --env-file .env` 来 build 并运行
     - 如果你的服务器上使用 `traefik` 反向代理，你可以使用默认的 docker-compose 配置，`docker-compose up --build `，记得在 `.env` 文件中的 `WEBSITE_URL` 说明你的域名和路由
 4. 现在你可以在浏览器 `localhost:10985` 访问它。桌面端样式不对和字体不对是正常现象，因为学校官方网站也是这样的，真正的完全相同（笑😂，微信访问就正常了
@@ -50,14 +50,33 @@
 
 ## API
 
-请求参数
+### 通行证页面 GET `/`
 
-| 参数名称 | 含义                     | 默认值   |
-| -------- | ------------------------ | -------- |
-| name     | 你的名字                 | 随机姓名 |
-| school   | 你的学院                 | 随机学院 |
-| type     | 出校或入校，填`出`或`入` | 入       |
-| id       | 你的学号                 | 随机学号 |
+| URL Param | 含义                     | 默认值   |
+| --------- | ------------------------ | -------- |
+| name      | 你的名字                 | 随机姓名 |
+| school    | 你的学院                 | 随机学院 |
+| type      | 出校或入校，填`出`或`入` | 入       |
+| id        | 你的学号                 | 随机学号 |
 
 最终你的 URL 看起来会是这样：`http://localhost:10985/?school=你的学院&type=出&id=你的学号&name=你的名字`
 
+### 获取日志 GET `/logs`
+
+> 需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
+
+### 发送全局提醒 POST `/alert`
+
+>  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
+
+Request body 使用 JSON
+
+| JSON Property | Type   | 含义                 |
+| ------------- | ------ | -------------------- |
+| alert         | string | 用户能看到的提醒信息 |
+
+### 获取全局提醒 GET `/alert`
+
+### 删除全局提醒 DELETE `/alert`
+
+>  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
