@@ -9,6 +9,9 @@ const staticRes = express.static('static')
 const { createLogger, format, transports } = require('winston')
 const logFilename = "logs/" + (process.env.LOG_FILENAME || "combined.log")
 const lineReader = require('reverse-line-reader')
+let isRadomInfoEnabled = (process.env.RANDOM_INFO === "true")
+let customAlert = ""
+
 
 const logger = createLogger({
   level: 'info',
@@ -26,6 +29,7 @@ const logger = createLogger({
   ]
 });
 
+
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new transports.Console({
     format: format.combine(
@@ -34,6 +38,7 @@ if (process.env.NODE_ENV !== 'production') {
     )
   }));
 }
+
 
 const schoolList = [
   '信息与通信工程学院',
@@ -50,14 +55,17 @@ const schoolList = [
   '国际学院'
 ]
 
+
 const getRandomSchool = () => {
   const randomIndex = Math.floor(Math.random() * schoolList.length)
   return schoolList[randomIndex]
 }
 
+
 const getRandomName = () => {
   return faker.name.lastName() + faker.name.firstName()
 }
+
 
 const getRandomId = () => {
   const currentYear = (new Date()).getFullYear()
@@ -66,13 +74,14 @@ const getRandomId = () => {
   return randomYear + randomId
 }
 
-let customAlert = ""
 
 // read username and password for basic auth from environment variables
 const authUsers = {}
 process.env?.AUTH_USERNAME && (authUsers[process.env?.AUTH_USERNAME] = process.env?.AUTH_PASSWORD)
 
+
 app.use(express.json())
+
 
 app.get("/", (req, res) => {
   fs.readFile(path.join(__dirname, 'static', 'index.html'), function (err, data) {
@@ -82,10 +91,10 @@ app.get("/", (req, res) => {
       let htmlString = data.toString()
       const date = new Date(Date.now() + 8 * 60 * 60 * 1000)
       htmlString = htmlString
-        .replace('__name__', req.query?.name || getRandomName())
-        .replace('__school__', req.query?.school || getRandomSchool())
-        .replace('__type__', req.query?.type || '入')
-        .replace('__id__', req.query?.id || getRandomId())
+        .replace('__name__', req.query?.name || (isRadomInfoEnabled ? getRandomName() : "<请填写姓名>"))
+        .replace('__school__', req.query?.school || (isRadomInfoEnabled ? getRandomSchool() : "<请填写学院>"))
+        .replace('__type__', req.query?.type || (isRadomInfoEnabled ? '入' : "<请填写出入校类型>"))
+        .replace('__id__', req.query?.id || (isRadomInfoEnabled ? getRandomId() : "<请填写学号>"))
         .replace('__time__', date.toISOString().replace("T", " ").slice(0, -5))
       customAlert && (htmlString = htmlString.replace('__alert__', customAlert))
 
@@ -105,6 +114,7 @@ app.get("/", (req, res) => {
   });
 });
 
+
 // add alert
 app.post("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   if (!(customAlert = req?.body?.alert)) {
@@ -122,10 +132,12 @@ app.post("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) 
   res.status(201).send(`Created alert: ${customAlert}`)
 })
 
+
 // get alert
 app.get("/alert", (req, res) => {
   res.status(200).send(customAlert || "No alerts set.")
 })
+
 
 // delete alert
 app.delete("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
@@ -140,6 +152,29 @@ app.delete("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res
 
   res.status(204).send("Removed alert.")
 })
+
+
+// enable/disable random info generation
+app.delete("/random-info", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
+  const enabled = req?.body?.enabled
+
+  if (!enabled) {
+    res.status(400).send("Field `enabled` is not present.")
+    return
+  }
+
+  logger.info({
+    message: enabled ? "enable_random_info" : "disable_random_info",
+    ip: req.ip,
+    content: customAlert,
+    endpoint: req.path,
+  })
+
+  isRadomInfoEnabled = enabled
+
+  res.status(201).send(`${enabled ? "Enabled" : "Disabled"} random info.`)
+})
+
 
 app.get("/logs", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   const limit = req.query?.limit
@@ -172,6 +207,7 @@ app.get("/logs", basicAuth({ users: authUsers, challenge: true }), (req, res) =>
     res.status(200).send(logs)
   })
 })
+
 
 app.use('/', staticRes)
 

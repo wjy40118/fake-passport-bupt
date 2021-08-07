@@ -23,7 +23,8 @@ services:
       - "AUTH_USERNAME=${AUTH_USERNAME}"
       - "AUTH_PASSWORD=${AUTH_PASSWORD}"
       - "LOG_FILENAME=${LOG_FILENAME}"
-      - "TZ=Asia/Shanghai"
+      - "RANDOM_INFO=${RANDOM_INFO}"
+      - "TZ=${TZ}"
     volumes:
       - ./logs:/usr/src/app/logs
     expose:
