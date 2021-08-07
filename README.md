@@ -75,8 +75,20 @@ Request body 使用 JSON
 | ------------- | ------ | -------------------- |
 | alert         | string | 用户能看到的提醒信息 |
 
-### 获取全局提醒 GET `/alert`
-
 ### 删除全局提醒 DELETE `/alert`
 
 >  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
+
+### 开启/关闭随机信息生成 PUT `/random-identity`
+
+>  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
+
+Request body 使用 JSON
+
+| JSON Property | Type   | 含义                 |
+| ------------- | ------ | -------------------- |
+| enabled       | boolean | 开启/关闭随机信息生成 |
+
+### 获取配置信息 GET `/config`
+
+会获取全局提醒和随机信息生成的配置

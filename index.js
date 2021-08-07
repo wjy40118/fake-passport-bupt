@@ -9,7 +9,7 @@ const staticRes = express.static('static')
 const { createLogger, format, transports } = require('winston')
 const logFilename = "logs/" + (process.env.LOG_FILENAME || "combined.log")
 const lineReader = require('reverse-line-reader')
-let isRadomInfoEnabled = (process.env.RANDOM_INFO === "true")
+let isRandomIdentityEnabled = (process.env.RANDOM_INFO === "true")
 let customAlert = ""
 
 
@@ -91,10 +91,10 @@ app.get("/", (req, res) => {
       let htmlString = data.toString()
       const date = new Date(Date.now() + 8 * 60 * 60 * 1000)
       htmlString = htmlString
-        .replace('__name__', req.query?.name || (isRadomInfoEnabled ? getRandomName() : "<请填写姓名>"))
-        .replace('__school__', req.query?.school || (isRadomInfoEnabled ? getRandomSchool() : "<请填写学院>"))
-        .replace('__type__', req.query?.type || (isRadomInfoEnabled ? '入' : "<请填写出入校类型>"))
-        .replace('__id__', req.query?.id || (isRadomInfoEnabled ? getRandomId() : "<请填写学号>"))
+        .replace('__name__', req.query?.name || (isRandomIdentityEnabled ? getRandomName() : "<请填写姓名>"))
+        .replace('__school__', req.query?.school || (isRandomIdentityEnabled ? getRandomSchool() : "<请填写学院>"))
+        .replace('__type__', req.query?.type || (isRandomIdentityEnabled ? '入' : "<请填写出入校类型>"))
+        .replace('__id__', req.query?.id || (isRandomIdentityEnabled ? getRandomId() : "<请填写学号>"))
         .replace('__time__', date.toISOString().replace("T", " ").slice(0, -5))
       customAlert && (htmlString = htmlString.replace('__alert__', customAlert))
 
@@ -133,12 +133,6 @@ app.post("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) 
 })
 
 
-// get alert
-app.get("/alert", (req, res) => {
-  res.status(200).send(customAlert || "No alerts set.")
-})
-
-
 // delete alert
 app.delete("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   logger.info({
@@ -155,24 +149,34 @@ app.delete("/alert", basicAuth({ users: authUsers, challenge: true }), (req, res
 
 
 // enable/disable random info generation
-app.delete("/random-info", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
+app.put("/random-identity", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   const enabled = req?.body?.enabled
 
-  if (!enabled) {
+  if (enabled === undefined) {
     res.status(400).send("Field `enabled` is not present.")
     return
   }
 
   logger.info({
-    message: enabled ? "enable_random_info" : "disable_random_info",
+    message: enabled ? "enable_random_identity" : "disable_random_identity",
     ip: req.ip,
     content: customAlert,
     endpoint: req.path,
   })
 
-  isRadomInfoEnabled = enabled
+  isRandomIdentityEnabled = enabled
 
-  res.status(201).send(`${enabled ? "Enabled" : "Disabled"} random info.`)
+  res.status(201).send(`${enabled ? "Enabled" : "Disabled"} random identity.`)
+})
+
+// get config
+app.get("/config", (req, res) => {
+  const response = {
+    randomIdentity: isRandomIdentityEnabled,
+    alert: customAlert
+  }
+
+  res.status(200).send(response)
 })
 
 
