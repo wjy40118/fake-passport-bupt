@@ -10,6 +10,7 @@ const { createLogger, format, transports } = require('winston')
 const logFilename = "logs/" + (process.env.LOG_FILENAME || "combined.log")
 const lineReader = require('reverse-line-reader')
 let isRandomIdentityEnabled = (process.env.RANDOM_INFO === "true")
+let isAnonymousAccessEnabled = (process.env.ANONYMOUS_ACCESS === "true")
 let customAlert = ""
 
 
@@ -84,6 +85,22 @@ app.use(express.json())
 
 
 app.get("/", (req, res) => {
+  if ((!req.query?.name ||
+    !req.query?.school ||
+    !req.query?.id) &&
+    !isAnonymousAccessEnabled) {
+    logger.info({
+      message: "request_refused",
+      ip: req.ip,
+      username: req.query?.name,
+      school: req.query?.school,
+      type: req.query?.type,
+      userId: req.query?.id,
+      endpoint: req.path,
+    })
+    return res.status(400).send("400 Bad Request. Identity needed.")
+  }
+
   fs.readFile(path.join(__dirname, 'static', 'index.html'), function (err, data) {
     if (err) {
       res.sendStatus(404);
@@ -169,10 +186,32 @@ app.put("/random-identity", basicAuth({ users: authUsers, challenge: true }), (r
   res.status(201).send(`${enabled ? "Enabled" : "Disabled"} random identity.`)
 })
 
+// enable/disable anonymous access
+app.put("/anonymous-access", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
+  const enabled = req?.body?.enabled
+
+  if (enabled === undefined) {
+    res.status(400).send("Field `enabled` is not present.")
+    return
+  }
+
+  logger.info({
+    message: enabled ? "enable_anonymous_access" : "disable_anonymous_access",
+    ip: req.ip,
+    content: customAlert,
+    endpoint: req.path,
+  })
+
+  isAnonymousAccessEnabled = enabled
+
+  res.status(201).send(`${enabled ? "Enabled" : "Disabled"} anonymous access.`)
+})
+
 // get config
 app.get("/config", (req, res) => {
   const response = {
     randomIdentity: isRandomIdentityEnabled,
+    anonymousAccess: isAnonymousAccessEnabled,
     alert: customAlert
   }
 

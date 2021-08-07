@@ -89,6 +89,16 @@ Request body 使用 JSON
 | ------------- | ------ | -------------------- |
 | enabled       | boolean | 开启/关闭随机信息生成 |
 
+### 开启/关闭匿名访问（不设置身份信息） PUT `/anonymous-access`
+
+>  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
+
+Request body 使用 JSON
+
+| JSON Property | Type   | 含义                 |
+| ------------- | ------ | -------------------- |
+| enabled       | boolean | 开启/关闭匿名访问 |
+
 ### 获取配置信息 GET `/config`
 
 会获取全局提醒和随机信息生成的配置

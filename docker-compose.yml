@@ -24,6 +24,7 @@ services:
       - "AUTH_PASSWORD=${AUTH_PASSWORD}"
       - "LOG_FILENAME=${LOG_FILENAME}"
       - "RANDOM_INFO=${RANDOM_INFO}"
+      - "ANONYMOUS_ACCESS=${ANONYMOUS_ACCESS}"
       - "TZ=${TZ}"
     volumes:
       - ./logs:/usr/src/app/logs
