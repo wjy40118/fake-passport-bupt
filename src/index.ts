@@ -119,7 +119,7 @@ app.use(express.json())
 
 app.get("/", (req, res) => {
   // if anonymous access is disabled
-  if (!config?.anonymousAccess) {
+  if (!config?.isAnonymousAccessEnabled) {
     // if not all the fields are provided
     if (!req.query?.name ||
       !req.query?.school ||
@@ -138,7 +138,7 @@ app.get("/", (req, res) => {
       return res.status(400).send("400 Bad Request. Identity not complete.")
     }
     // if white list is enabled
-    if (config?.whitelistEnabled && !config?.whitelist.includes(req.query?.name.toString())) {
+    if (config?.isWhitelistEnabled && !config?.whitelist.includes(req.query?.name.toString())) {
       logger.info({
         message: "request_refused",
         reason: "name not in whitelist",
@@ -162,10 +162,10 @@ app.get("/", (req, res) => {
       let htmlString = data.toString()
       const date     = new Date(Date.now() + 8 * 60 * 60 * 1000)
       htmlString     = htmlString
-        .replace('__name__', req.query?.name || (config?.randomIdentity ? getRandomName() : "<请填写姓名>"))
-        .replace('__school__', req.query?.school || (config?.randomIdentity ? getRandomSchool() : "<请填写学院>"))
-        .replace('__type__', req.query?.type || (config?.randomIdentity ? '入' : "<请填写出入校类型>"))
-        .replace('__id__', req.query?.id || (config?.randomIdentity ? getRandomId() : "<请填写学号>"))
+        .replace('__name__', req.query?.name || (config?.isRandomIdentityEnabled ? getRandomName() : "<请填写姓名>"))
+        .replace('__school__', req.query?.school || (config?.isRandomIdentityEnabled ? getRandomSchool() : "<请填写学院>"))
+        .replace('__type__', req.query?.type || (config?.isRandomIdentityEnabled ? '入' : "<请填写出入校类型>"))
+        .replace('__id__', req.query?.id || (config?.isRandomIdentityEnabled ? getRandomId() : "<请填写学号>"))
         .replace('__time__', date.toISOString().replace("T", " ").slice(0, -5))
       config?.alert && (htmlString = htmlString.replace('__alert__', config?.alert))
 
@@ -240,12 +240,12 @@ app.put("/config/random-identity", basicAuth({users: authUsers, challenge: true}
     return
   }
 
-  if (config.randomIdentity === enabled) {
+  if (config.isRandomIdentityEnabled === enabled) {
     res.status(200).send(`Already ${enabled ? "enabled" : "disabled"}`)
     return
   }
 
-  config.randomIdentity = enabled
+  config.isRandomIdentityEnabled = enabled
 
   res.status(201).send(`${enabled ? "Enabled" : "Disabled"} random identity.`)
 
@@ -268,12 +268,12 @@ app.put("/config/anonymous-access", basicAuth({users: authUsers, challenge: true
     return
   }
 
-  if (config.anonymousAccess === enabled) {
+  if (config.isAnonymousAccessEnabled === enabled) {
     res.status(200).send(`Already ${enabled ? "enabled" : "disabled"}`)
     return
   }
 
-  config.anonymousAccess = enabled
+  config.isAnonymousAccessEnabled = enabled
 
   res.status(201).send(`${enabled ? "Enabled" : "Disabled"} anonymous access.`)
 
@@ -293,18 +293,18 @@ app.post("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (r
     return
   }
 
-  config.whitelistEnabled = req.body.enabled
+  config.isWhitelistEnabled = req.body.enabled
   config.whitelist = req.body.whitelist as string[]
 
   res.status(201).send({
     whitelist: config.whitelist,
-    enabled: config.whitelistEnabled
+    enabled: config.isWhitelistEnabled
   })
 
   logger.info({
     message: "edit_whitelist",
     ip: req.ip,
-    enabled: config.whitelistEnabled,
+    enabled: config.isWhitelistEnabled,
     content: config.whitelist,
     endpoint: req.path,
   })

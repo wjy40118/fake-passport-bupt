@@ -1,7 +1,7 @@
 export interface Config {
-    randomIdentity: boolean,
-    anonymousAccess: boolean,
+    isRandomIdentityEnabled: boolean,
+    isAnonymousAccessEnabled: boolean,
     alert: string,
     whitelist: string[],
-    whitelistEnabled: boolean
+    isWhitelistEnabled: boolean
 }
