@@ -11,7 +11,7 @@ const basicAuth                            = require('express-basic-auth');
 const {createLogger, format, transports}   = require('winston')
 const lineReader                           = require('reverse-line-reader')
 const logFilename                          = "logs/" + (process.env.LOG_FILENAME || "combined.log")
-const configFilename                       = "config/" + (process.env.CONFIG_FILENAME || "combined.log")
+const configFilename                       = "config/" + (process.env.CONFIG_FILENAME || "config.json")
 const port                                 = process.env.PORT || 10985
 const app: Application                     = express()
 const staticRes                            = express.static('static')
@@ -318,7 +318,13 @@ app.put("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (re
     return
   }
 
-  config.whitelist = [...config.whitelist, ...req.body.whitelist as string[]]
+  (req.body.whitelist as string[]).forEach(item => {
+    if (config.whitelist.includes(item)) {
+      return
+    }
+    
+    config.whitelist.push(item)
+  })
 
   res.status(201).send(config.whitelist)
 
