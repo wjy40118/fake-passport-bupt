@@ -56,7 +56,7 @@
 | --------- | ------------------------ | -------- |
 | name      | 你的名字                 | 随机姓名 |
 | school    | 你的学院                 | 随机学院 |
-| type      | 出校或入校，填`出`或`入` | 入       |
+| type      | 出校或入校，填 `出` 或 `入` | 入       |
 | id        | 你的学号                 | 随机学号 |
 
 最终你的 URL 看起来会是这样：`http://localhost:10985/?school=你的学院&type=出&id=你的学号&name=你的名字`
@@ -65,7 +65,7 @@
 
 > 需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
 
-### 发送全局提醒 POST `/alert`
+### 发送全局提醒 POST `/config/alert`
 
 >  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
 
@@ -73,23 +73,13 @@ Request body 使用 JSON
 
 | JSON Property | Type   | 含义                 |
 | ------------- | ------ | -------------------- |
-| alert         | string | 用户能看到的提醒信息 |
+| alert         | `string` | 用户能看到的提醒信息 |
 
-### 删除全局提醒 DELETE `/alert`
-
->  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
-
-### 开启/关闭随机信息生成 PUT `/random-identity`
+### 删除全局提醒 DELETE `/config/alert`
 
 >  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
 
-Request body 使用 JSON
-
-| JSON Property | Type   | 含义                 |
-| ------------- | ------ | -------------------- |
-| enabled       | boolean | 开启/关闭随机信息生成 |
-
-### 开启/关闭匿名访问（不设置身份信息） PUT `/anonymous-access`
+### 开启/关闭随机信息生成 PUT `/config/random-identity`
 
 >  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
 
@@ -97,8 +87,41 @@ Request body 使用 JSON
 
 | JSON Property | Type   | 含义                 |
 | ------------- | ------ | -------------------- |
-| enabled       | boolean | 开启/关闭匿名访问 |
+| enabled       | `boolean` | 开启/关闭随机信息生成 |
+
+### 开启/关闭匿名访问（不设置身份信息） PUT `/config/anonymous-access`
+
+>  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
+
+Request body 使用 JSON
+
+| JSON Property | Type   | 含义                 |
+| ------------- | ------ | -------------------- |
+| enabled       | `boolean` | 开启/关闭匿名访问 |
+
+### 设置白名单 POST `/config/whitelist`
+
+>  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
+
+Request body 使用 JSON
+
+| JSON Property | Type   | 含义                 |
+| ------------- | ------ | -------------------- |
+| enabled       | `boolean` | 开启/关闭白名单 |
+| whitelist       | `string[]` | 在白名单中的姓名（将覆盖原有的） |
+
+### 添加白名单 PUT `/config/whitelist`
+
+>  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
+
+Request body 使用 JSON
+
+| JSON Property | Type   | 含义                 |
+| ------------- | ------ | -------------------- |
+| whitelist       | `string[]` | 在白名单中的姓名（将添加至原有的） |
 
 ### 获取配置信息 GET `/config`
+
+>  需要鉴权，记得设置 `AUTH_USERNAME` 和 `AUTH_PASSWORD` 环境变量或在 `.env` 中配置用户名和密码
 
 会获取全局提醒和随机信息生成的配置
