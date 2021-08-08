@@ -6,3 +6,4 @@ npm-debug.log
 *.pid
 logs
 .DS_Store
+dist
