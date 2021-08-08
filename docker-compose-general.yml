@@ -8,6 +8,6 @@ services:
     ports:
       - "10985:10985"
     environment:
-      - PORT
+      - "NODE_ENV=production"
     expose:
       - "${PORT}"

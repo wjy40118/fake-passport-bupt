@@ -1,6 +1,6 @@
 #!/bin/bash
 
-START_COMMAND="node ."
+START_COMMAND="node dist"
 
 if [ "${DETACH}" = true ]; then
     START_COMMAND_PID="${START_COMMAND} & echo \$! > ./${PID_FILE_NAME} &"
