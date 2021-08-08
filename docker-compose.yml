@@ -21,6 +21,7 @@ services:
       - "NODE_ENV=production"
     volumes:
       - ./logs:/usr/src/app/logs
+      - ./config:/usr/src/app/config
     expose:
       - "${PORT}"
 

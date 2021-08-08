@@ -9,5 +9,8 @@ services:
       - "10985:10985"
     environment:
       - "NODE_ENV=production"
+    volumes:
+      - ./logs:/usr/src/app/logs
+      - ./config:/usr/src/app/config
     expose:
       - "${PORT}"
