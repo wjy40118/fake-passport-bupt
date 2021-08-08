@@ -1,9 +1,0 @@
-{
-    "randomIdentity": true,
-    "anonymousAccess": true,
-    "alert": "",
-    "whitelist": [
-        "1"
-    ],
-    "whitelistEnabled": true
-}
