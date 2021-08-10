@@ -185,6 +185,10 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/index.html", (req, res) => {
+  return res.status(400).send("403 Forbidden")
+})
+
 
 // add alert
 app.post("/config/alert", basicAuth({users: authUsers, challenge: true}), (req, res) => {
