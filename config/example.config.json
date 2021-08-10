@@ -4,5 +4,5 @@
     "alert": "",
     "whitelist": [
     ],
-    "isWhitelistEnabled": true
+    "isWhitelistEnabled": false
 }
