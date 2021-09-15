@@ -2,7 +2,7 @@
 
 真正的网页版北邮出入校通行证，自定义任何信息，与真实网页完全相同，随意检查。
 
-每个请求均可以自定义`姓名`，`学院`，`学号`，`出入校类型` 或使用随机生成的身份信息。
+每个请求均可以*随机生成身份信息*或*自定义`姓名`，`学院`，`学号`，`出入校类型`*。
 
 > 2021 年 9 月 13 日，目前疫情加重，请自觉配合学校疫情防控检查！不建议使用该工具
 
@@ -37,7 +37,7 @@
 ### 运行方法二：Docker 容器化
 
 1. 确保安装了 `docker` 和 `docker-compose`
-2. `docker-compose up --build --file docker-compose-general.yml --env-file .env` 来 build 并运行
+2. `docker-compose --file docker-compose-general.yml up --build` 来 build 并运行
     - 如果你的服务器上使用 `traefik` 反向代理，你可以使用默认的 docker-compose 配置，`docker-compose up --build `，记得在 `.env` 文件中的 `WEBSITE_URL` 说明你的域名和路由
 3. 现在你可以在浏览器 `localhost:10985` 访问它。桌面端样式不对和字体不对是正常现象，因为学校官方网站也是这样的，真正的完全相同（笑😂，微信访问就正常了
 4. 在服务器上部署时加上 `--detach` 参数即可在后台运行
