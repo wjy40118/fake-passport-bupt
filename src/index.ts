@@ -364,15 +364,13 @@ app.put("/config/whitelist", basicAuth({ users: authUsers, challenge: true }), (
       return false
     }
 
-    if (verifyIdentity(i)) {
-      return true
+    if (!verifyIdentity(i)) {
+      config.whitelist.push({
+        name: i?.name,
+        id: i?.id,
+        auth: i?.auth
+      })
     }
-
-    config.whitelist.push({
-      name: i?.name,
-      id: i?.id,
-      auth: i?.auth
-    })
   })
   if (failed) {
     return
