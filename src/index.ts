@@ -1,5 +1,6 @@
-import {Application} from "express";
-import {Config}      from "./types";
+import {Application}                 from "express";
+import {AuthorizationFields, Config} from "./types";
+import { fail }                      from "assert";
 
 require('dotenv').config()
 
@@ -28,6 +29,14 @@ const writeConfig = () => {
       })
     }
   })
+}
+
+const verifyIdentity = (payload: AuthorizationFields) => {
+  const foundUser = config.whitelist.find((i) => i?.id === payload?.id);
+
+  return (!!foundUser
+    && foundUser?.auth === payload?.auth
+    && foundUser?.name === payload?.name)
 }
 
 const init = () => {
@@ -135,13 +144,19 @@ app.get("/", (req, res) => {
         endpoint: req.path,
       })
 
-      return res.status(400).send("400 Bad Request. Identity not complete.")
+      return res.status(400).send("400 Bad Request. Incomplete identity.")
+    }
+
+    const reqIdentity: AuthorizationFields = {
+      id: req.query?.id?.toString(),
+      name: req.query?.name?.toString(),
+      auth: req.query?.auth?.toString(),
     }
     // if white list is enabled
-    if (config?.isWhitelistEnabled && !config?.whitelist.includes(req.query?.name.toString())) {
+    if (config?.isWhitelistEnabled && !verifyIdentity(reqIdentity)) {
       logger.info({
         message: "request_refused",
-        reason: "name not in whitelist",
+        reason: "identity not allowed (not in whitelist)",
         ip: req.ip,
         username: req.query?.name,
         school: req.query?.school,
@@ -298,7 +313,27 @@ app.post("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (r
   }
 
   config.isWhitelistEnabled = req.body.enabled
-  config.whitelist = req.body.whitelist as string[]
+
+  let failed = false
+  const tmpWhitelist = []
+  req.body.whitelist.every((i: AuthorizationFields) => {
+    if (!(i?.name && i?.id && i?.auth)) {
+      res.status(400).send("Invalid whitelist.")
+      failed = true
+      return false
+    }
+    tmpWhitelist.push({
+      name: i?.name,
+      id: i?.id,
+      auth: i?.auth
+    })
+  })
+
+  if(failed) {
+    return
+  }
+
+  config.whitelist = tmpWhitelist
 
   res.status(201).send({
     whitelist: config.whitelist,
@@ -322,13 +357,27 @@ app.put("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (re
     return
   }
 
-  (req.body.whitelist as string[]).forEach(item => {
-    if (config.whitelist.includes(item)) {
-      return
+  let failed = false
+  req.body.whitelist.every(i => {
+    if (!(i?.name && i?.id && i?.auth)) {
+      res.status(400).send("Invalid whitelist.")
+      failed = true
+      return false
     }
-    
-    config.whitelist.push(item)
+
+    if (verifyIdentity(i)) {
+      return true
+    }
+
+    config.whitelist.push({
+      name: i?.name,
+      id: i?.id,
+      auth: i?.auth
+    })
   })
+  if(failed) {
+    return
+  }
 
   res.status(201).send(config.whitelist)
 
