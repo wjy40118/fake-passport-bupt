@@ -56,6 +56,7 @@
 | school    | 你的学院                 | 随机学院 |
 | type      | 出校或入校，填 `出` 或 `入` | 入       |
 | id        | 你的学号                 | 随机学号 |
+| auth | （可选）开始白名单时的额外身份验证信息 | 无 |
 
 最终你的 URL 看起来会是这样：`http://localhost:10985/?school=你的学院&type=出&id=你的学号&name=你的名字`
 
@@ -106,7 +107,7 @@ Request body 使用 JSON
 | JSON Property | Type   | 含义                 |
 | ------------- | ------ | -------------------- |
 | enabled       | `boolean` | 开启/关闭白名单 |
-| whitelist       | `string[]` | 在白名单中的姓名（将覆盖原有的） |
+| whitelist       | `{id: string, name: string, auth: string}[]` | 在白名单中的身份（将覆盖原有的） |
 
 ### 添加白名单 PUT `/config/whitelist`
 
@@ -116,7 +117,7 @@ Request body 使用 JSON
 
 | JSON Property | Type   | 含义                 |
 | ------------- | ------ | -------------------- |
-| whitelist       | `string[]` | 在白名单中的姓名（将添加至原有的） |
+| whitelist       | ``{id: string, name: string, auth: string}[]`` | 在白名单中的身份（将添加至原有的） |
 
 ### 获取配置信息 GET `/config`
 
