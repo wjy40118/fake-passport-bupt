@@ -1,6 +1,5 @@
-import {Application}                 from "express";
-import {AuthorizationFields, Config} from "./types";
-import { fail }                      from "assert";
+import { Application }                 from "express";
+import { AuthorizationFields, Config } from "./types";
 
 require('dotenv').config()
 
@@ -9,7 +8,7 @@ const fs                                   = require('fs');
 const path                                 = require('path')
 const faker                                = require('faker/locale/zh_CN')
 const basicAuth                            = require('express-basic-auth');
-const {createLogger, format, transports}   = require('winston')
+const { createLogger, format, transports } = require('winston')
 const lineReader                           = require('reverse-line-reader')
 const logFilename                          = "logs/" + (process.env.LOG_FILENAME || "combined.log")
 const configFilename                       = "config/" + (process.env.CONFIG_FILENAME || "config.json")
@@ -98,13 +97,13 @@ const logger = createLogger({
     format.timestamp({
       format: "YYYY-MM-DD HH:mm:ss.SSS"
     }),
-    format.errors({stack: true}),
+    format.errors({ stack: true }),
     format.splat(),
     format.json()
   ),
-  defaultMeta: {service: 'fake-passport-bupt'},
+  defaultMeta: { service: 'fake-passport-bupt' },
   transports: [
-    new transports.File({filename: logFilename})
+    new transports.File({ filename: logFilename })
   ]
 });
 
@@ -206,7 +205,7 @@ app.get("/index.html", (req, res) => {
 
 
 // add alert
-app.post("/config/alert", basicAuth({users: authUsers, challenge: true}), (req, res) => {
+app.post("/config/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   if (!req?.body?.alert) {
     res.status(400).send("Need field `alert` in the body!")
     return
@@ -228,7 +227,7 @@ app.post("/config/alert", basicAuth({users: authUsers, challenge: true}), (req, 
 
 
 // delete alert
-app.delete("/config/alert", basicAuth({users: authUsers, challenge: true}), (req, res) => {
+app.delete("/config/alert", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
 
   if (!config.alert) {
     res.status(204).send("No alerts to remove.")
@@ -251,7 +250,7 @@ app.delete("/config/alert", basicAuth({users: authUsers, challenge: true}), (req
 
 
 // enable/disable random info generation
-app.put("/config/random-identity", basicAuth({users: authUsers, challenge: true}), (req, res) => {
+app.put("/config/random-identity", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   const enabled = req?.body?.enabled
 
   if (enabled === undefined) {
@@ -279,7 +278,7 @@ app.put("/config/random-identity", basicAuth({users: authUsers, challenge: true}
 })
 
 // enable/disable anonymous access
-app.put("/config/anonymous-access", basicAuth({users: authUsers, challenge: true}), (req, res) => {
+app.put("/config/anonymous-access", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   const enabled = req?.body?.enabled
 
   if (enabled === undefined) {
@@ -306,7 +305,7 @@ app.put("/config/anonymous-access", basicAuth({users: authUsers, challenge: true
   writeConfig()
 })
 
-app.post("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (req, res) => {
+app.post("/config/whitelist", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   if (!(req.body?.whitelist instanceof Array) || req.body?.enabled === undefined) {
     res.status(400).send("Invalid request fields.")
     return
@@ -314,7 +313,7 @@ app.post("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (r
 
   config.isWhitelistEnabled = req.body.enabled
 
-  let failed = false
+  let failed         = false
   const tmpWhitelist = []
   req.body.whitelist.every((i: AuthorizationFields) => {
     if (!(i?.name && i?.id && i?.auth)) {
@@ -329,7 +328,7 @@ app.post("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (r
     })
   })
 
-  if(failed) {
+  if (failed) {
     return
   }
 
@@ -351,7 +350,7 @@ app.post("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (r
   writeConfig()
 })
 
-app.put("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (req, res) => {
+app.put("/config/whitelist", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   if (!(req.body?.whitelist instanceof Array)) {
     res.status(400).send("Invalid field `whitelist`")
     return
@@ -375,7 +374,7 @@ app.put("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (re
       auth: i?.auth
     })
   })
-  if(failed) {
+  if (failed) {
     return
   }
 
@@ -393,12 +392,12 @@ app.put("/config/whitelist", basicAuth({users: authUsers, challenge: true}), (re
 })
 
 // get config
-app.get("/config", basicAuth({users: authUsers, challenge: true}), (req, res) => {
+app.get("/config", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   res.status(200).send(config)
 })
 
 
-app.get("/logs", basicAuth({users: authUsers, challenge: true}), (req, res) => {
+app.get("/logs", basicAuth({ users: authUsers, challenge: true }), (req, res) => {
   const limit  = +req.query?.limit
   const logs   = []
   let lineRead = 0
